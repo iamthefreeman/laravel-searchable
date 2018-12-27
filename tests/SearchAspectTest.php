@@ -2,7 +2,6 @@
 
 namespace Spatie\Searchable\Tests;
 
-use Illuminate\Foundation\Auth\User;
 use Spatie\Searchable\Tests\stubs\CustomNameSearchAspect;
 
 class SearchAspectTest extends TestCase
@@ -16,12 +15,12 @@ class SearchAspectTest extends TestCase
     }
 
     /** @test */
-    public function it_can_be_used_by_everyone_by_default()
+    public function the_type_can_be_customized()
     {
-        $searchAspect = new CustomNameSearchAspect();
+        $searchAspectWithCustomName = new class extends CustomNameSearchAspect {
+            public static $searchType = 'custom named aspect';
+        };
 
-        $user = new User();
-
-        $this->assertTrue($searchAspect->canBeUsedBy($user));
+        $this->assertEquals('custom named aspect', $searchAspectWithCustomName->getType());
     }
 }

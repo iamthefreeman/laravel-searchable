@@ -6,7 +6,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Contracts\Auth\Access\Gate;
 use Spatie\Searchable\Exceptions\InvalidSearchableModel;
 use Spatie\Searchable\Exceptions\InvalidModelSearchAspect;
 
@@ -18,6 +17,11 @@ class ModelSearchAspect extends SearchAspect
     /** @var array */
     protected $attributes = [];
 
+    public static function forModel(string $model, ...$attributes): self
+    {
+        return new self($model, $attributes);
+    }
+
     /**
      * @param string $model
      * @param array|\Closure $attributes
@@ -26,11 +30,11 @@ class ModelSearchAspect extends SearchAspect
      */
     public function __construct(string $model, $attributes = [])
     {
-        if (!is_subclass_of($model, Model::class)) {
+        if (! is_subclass_of($model, Model::class)) {
             throw InvalidSearchableModel::notAModel($model);
         }
 
-        if (!is_subclass_of($model, Searchable::class)) {
+        if (! is_subclass_of($model, Searchable::class)) {
             throw InvalidSearchableModel::modelDoesNotImplementSearchable($model);
         }
 
@@ -47,11 +51,6 @@ class ModelSearchAspect extends SearchAspect
         }
     }
 
-    public static function forModel(string $model, ...$attributes): self
-    {
-        return new self($model, $attributes);
-    }
-
     public function addSearchableAttribute(string $attribute, bool $partial = true): self
     {
         $this->attributes[] = SearchableAttribute::create($attribute, $partial);
@@ -64,15 +63,6 @@ class ModelSearchAspect extends SearchAspect
         $this->attributes[] = SearchableAttribute::createExact($attribute);
 
         return $this;
-    }
-
-    public function canBeUsedBy(User $user): bool
-    {
-        if (!app(Gate::class)->has($this->model)) {
-            return true;
-        }
-
-        return $user->can($this->model, 'view');
     }
 
     public function getType(): string

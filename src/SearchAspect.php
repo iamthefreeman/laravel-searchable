@@ -3,14 +3,17 @@
 namespace Spatie\Searchable;
 
 use Illuminate\Support\Collection;
-use Illuminate\Foundation\Auth\User;
 
 abstract class SearchAspect
 {
-    abstract public function getResults(string $term, ?User $user = null): Collection;
+    abstract public function getResults(string $term): Collection;
 
     public function getType(): string
     {
+        if (isset(static::$searchType)) {
+            return static::$searchType;
+        }
+
         $className = class_basename(static::class);
 
         $type = str_before($className, 'SearchAspect');
@@ -18,10 +21,5 @@ abstract class SearchAspect
         $type = snake_case(str_plural($type));
 
         return str_plural($type);
-    }
-
-    public function canBeUsedBy(User $user): bool
-    {
-        return true;
     }
 }

@@ -4,7 +4,6 @@ namespace Spatie\Searchable\Tests\stubs;
 
 use Illuminate\Support\Collection;
 use Spatie\Searchable\SearchAspect;
-use Illuminate\Foundation\Auth\User;
 
 class CustomNameSearchAspect extends SearchAspect
 {
@@ -19,7 +18,7 @@ class CustomNameSearchAspect extends SearchAspect
         ];
     }
 
-    public function getResults(string $term, ?User $user = null): Collection
+    public function getResults(string $term): Collection
     {
         return collect($this->accounts)
             ->filter(function (Account $account) use ($term) {
