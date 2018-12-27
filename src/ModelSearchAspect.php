@@ -19,8 +19,6 @@ class ModelSearchAspect extends SearchAspect
     protected $attributes = [];
 
     /**
-     * ModelSearchAspect constructor.
-     *
      * @param string $model
      * @param array|\Closure $attributes
      *
@@ -74,7 +72,7 @@ class ModelSearchAspect extends SearchAspect
             return true;
         }
 
-        return $user->can($this->model, 'view'); // TODO: this gate thing doesnt actually exist
+        return $user->can($this->model, 'view');
     }
 
     public function getType(): string
